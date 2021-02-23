@@ -7,7 +7,7 @@ class User(db.Model): #데이터 모델을 나타내는 객체 선언
     
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(32), unique=True, nullable=False)
-    userid = db.Column(db.String(32), unique=True, nullable=False)
+    username = db.Column(db.String(32), unique=True, nullable=False)
     password = db.Column(db.String(8), nullable=False)
 
     def __init__(self, email, password):
