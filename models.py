@@ -19,7 +19,8 @@ class User(db.Model): #데이터 모델을 나타내는 객체 선언
         return check_password_hash(self.password, password)
 
     def __repr__(self):
-        return '<User %r>' % self.username
+        return "<User(email='%s', username='%s')>" % (
+                                self.email, self.username)
 
 class Book(db.Model):
     __tablename__ = 'booktable' #테이블 이름

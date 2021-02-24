@@ -5,9 +5,14 @@ from models import db
 from models import User, Book
 app = Flask(__name__)
 
-@app.route('/')
-def hello():
-	return render_template('login.html')
+@app.route('/', methods=['GET','POST'])
+def home():
+    if not session.get('logged_in'):
+	    return render_template('index.html')
+    else:
+        if request.method=='POST':
+            return render_template('index.html')
+        return render_template('index.html')
 
 @app.route('/login', methods=['GET','POST'])  
 def login():
@@ -17,14 +22,18 @@ def login():
         email=request.form.get('email')
         password=request.form.get('password')
 
-        data=User.query.filter_by(email=email, password=password).first() 
-
-        if data is not None:
+        data_email=User.query.filter_by(email=email).first() 
+        data_password=User.query.filter_by(password=password).first()
+        if data_email is not None and data_password is not None:
             session['logged_in'] = True
             return redirect(url_for('main'))
         else:
             return 'Dont Login' 
 
+@app.route('/logout')
+def logout():
+    session['logged_in']=False
+    return redirect(url_for('home'))
 
 @app.route('/register', methods=['GET','POST']) 
 def register():
