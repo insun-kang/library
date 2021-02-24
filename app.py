@@ -2,7 +2,7 @@ import os #디렉토리 절대 경로
 from flask import Flask, render_template, request, redirect, session, url_for
 from flask_sqlalchemy import SQLAlchemy
 from models import db
-from models import User
+from models import User, Book
 app = Flask(__name__)
 
 @app.route('/')
@@ -16,20 +16,17 @@ def login():
     else:
         email=request.form.get('email')
         password=request.form.get('password')
-        try:
-            data=User.query.filter_by(email=em, password=pw).first() 
 
-            if data is not None:
-                session['logged_in'] = True
-                return redirect(url_for('main'))
-            else:
-                return 'Dont Login'
-        except:
-            return "Dont Login"
+        data=User.query.filter_by(email=email, password=password).first() 
+
+        if data is not None:
+            session['logged_in'] = True
+            return redirect(url_for('main'))
+        else:
+            return 'Dont Login' 
 
 
-
-@app.route('/register', methods=['GET','POST']) #GET(정보보기), POST(정보수정) 메서드 허용
+@app.route('/register', methods=['GET','POST']) 
 def register():
     if request.method == 'GET':
         return render_template("register.html")
@@ -53,6 +50,18 @@ def register():
             db.session.commit()
             return "회원가입 성공"
         return redirect('/')
+
+
+@app.route('/main', methods=['GET','POST']) 
+def main():
+    if request.method == 'GET':
+        return render_template("main.html")
+    else:
+        return render_template("main.html")
+
+
+
+
 
 if __name__ == "__main__":
 

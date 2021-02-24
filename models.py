@@ -20,3 +20,33 @@ class User(db.Model): #데이터 모델을 나타내는 객체 선언
 
     def __repr__(self):
         return '<User %r>' % self.username
+
+class Book(db.Model):
+    __tablename__ = 'booktable' #테이블 이름
+    __table_args__ = {'mysql_collate': 'utf8_general_ci'}
+
+    id=db.Column(db.Integer, primary_key=True)
+    book_name=db.Column(db.String(100), unique=True, nullable=False)
+    publisher =db.Column(db.String(100), unique=True, nullable=False)
+    author =db.Column(db.String(100), unique=True, nullable=False)
+    publication_date=db.Column(db.String(100), unique=True, nullable=False)
+    pages=db.Column(db.String(100), unique=True, nullable=False)
+    isbn =db.Column(db.String(100), unique=True, nullable=False)
+    description=db.Column(db.String(100), unique=True, nullable=False)
+    quantity=db.Column(db.String(8), unique=True, nullable=False)
+    rating=db.Column(db.String(8), unique=True, nullable=False)
+
+    def __init__(self, book_name, publisher, author, publication_date, pages, isbn, description, quantity, rating):
+        self.book_name=book_name
+        self.publisher=publisher
+        self.author=author
+        self.publication_date=publication_date
+        self.pages=pages
+        self.isbn=isbn
+        self.description=description
+        self.quantity=quantity
+        self.rating=rating
+
+    def __str__(self):
+        return f"book_name : '{self.book_name}'"
+    
