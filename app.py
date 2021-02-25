@@ -3,6 +3,7 @@ from flask import Flask, render_template, request, redirect, session, url_for
 from flask_sqlalchemy import SQLAlchemy
 from models import db
 from models import User, Book
+
 app = Flask(__name__)
 
 @app.route('/', methods=['GET','POST'])
@@ -24,11 +25,14 @@ def login():
 
         data_email=User.query.filter_by(email=email).first() 
         data_password=User.query.filter_by(password=password).first()
+
         if data_email is not None and data_password is not None:
             session['logged_in'] = True
             return redirect(url_for('main'))
+        elif data_email is None:
+            return '이메일이 틀렸습니다'
         else:
-            return 'Dont Login' 
+            return '비밀번호가 틀렸습니다' 
 
 @app.route('/logout')
 def logout():
@@ -64,7 +68,8 @@ def register():
 @app.route('/main', methods=['GET','POST']) 
 def main():
     if request.method == 'GET':
-        return render_template("main.html")
+        books = Book.query.all()
+        return render_template('main.html', books=books)
     else:
         return render_template("main.html")
 
@@ -78,7 +83,6 @@ if __name__ == "__main__":
     app.config['SQLALCHEMY_ECHO'] = True
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.secret_key = 'manyrandombyte'
-
 
     db.init_app(app) 
     db.app = app
