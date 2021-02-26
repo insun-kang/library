@@ -53,4 +53,4 @@ class Bookrental(db.Model):
     user_id=db.Column(db.Integer, ForeignKey('usertable.id'))
     username= db.Column(db.String(32))
     rental_date=db.Column(db.DATE)
-    return_date=db.Column(db.DATE, nullable=True)
+    return_date=db.Column(db.String(100))

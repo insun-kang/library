@@ -80,9 +80,14 @@ def main():
 
         data_book = Book.query.filter_by(id = book_id).first()
         data_user = User.query.filter_by(email=session['logged_in']).first()
+        data_rentalbook=Bookrental.query.filter_by(book_id=data_book.id).first()
 
         if data_book.quantity<=0:
             return '대여할 수 없습니다.'
+
+        elif data_rentalbook is not None:
+
+            return '이미 빌린 책입니다'
         else:
             data_book.quantity -= 1
 
@@ -92,7 +97,7 @@ def main():
                 user_id=data_user.id,
                 username=data_user.username,
                 rental_date=datetime.date.today(),
-                return_date=datetime.date.today()+datetime.timedelta(+7)
+                return_date='미반납'
             )
             db.session.add(bookrental)
             db.session.commit()
@@ -106,8 +111,18 @@ def BookRental():
 
 @app.route('/returnbook', methods=['GET','POST']) 
 def returnbook():
+    returnbooks = Bookrental.query.filter_by(return_date='미반납')
+    if request.method == 'GET':
+        return render_template('returnbook.html', returnbooks=returnbooks)
+    else:
+        bookname=request.form['bookname']
+        data_returnbook=Bookrental.query.filter_by(bookname=bookname).first()
+        data_returnbook.return_date=datetime.date.today()
 
-    return render_template('returnbook.html')
+        db.session.commit()
+
+
+    return render_template('returnbook.html', returnbooks=returnbooks)
 
 
 
