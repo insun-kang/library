@@ -3,7 +3,7 @@ import datetime
 from flask import Flask, render_template, request, redirect, session, url_for
 from flask_sqlalchemy import SQLAlchemy
 from models import db
-from models import User, Book, BookRental
+from models import User, Book, Bookrental
 
 app = Flask(__name__)
 
@@ -55,10 +55,13 @@ def register():
         elif password != password_2:
             return "비밀번호가 일치하지 않습니다"
         else:
-            usertable=User()
-            usertable.username = username
-            usertable.email = email
-            usertable.password = password
+            usertable=User(
+                username = username,
+                email = email,
+                password = password
+                
+            )
+            
             
             db.session.add(usertable)
             db.session.commit()
@@ -76,8 +79,22 @@ def main():
         book_id=request.form['book_id']
 
         data_book = Book.query.filter_by(id = book_id).first()
-        data_book.quantity -= 1
-        db.session.commit()
+        data_user = User.query.filter_by(email=session['logged_in']).first()
+
+        if data_book.quantity<=0:
+            return '대여할 수 없습니다.'
+        else:
+            data_book.quantity -= 1
+
+            bookrental= Bookrental(
+                book_id=book_id,
+                username=data_user.username,
+                rental_date=datetime.date.today(),
+                return_date=datetime.date.today()+datetime.timedelta(+7)
+            )
+            db.session.add(bookrental)
+            db.session.commit()
+            return '대여성공'
         return render_template('main.html', books=books)
 
 @app.route('/BookRental', methods=['GET','POST']) 

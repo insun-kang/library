@@ -12,10 +12,11 @@
                 <tr>
                     <a href="/books/{{ book.id }}" name="book_name">{{ book.book_name }}</a>
                     <a name="rating">{{ book.rating }}점</a>
+                    
                     <a name="quantity">{{ book.quantity }}권 남음</a>
                     <form action="/main" method="POST">
                         <input type="hidden" name="book_id" value="{{ book.id }}">
-                        
+                        <input type="hidden" name="book_name" value="{{ book.book_name }}">
                         <input type="submit" value="대여하기">
                     </form>
         
