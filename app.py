@@ -1,8 +1,9 @@
 import os #디렉토리 절대 경로
+import datetime
 from flask import Flask, render_template, request, redirect, session, url_for
 from flask_sqlalchemy import SQLAlchemy
 from models import db
-from models import User, Book
+from models import User, Book, BookRental
 
 app = Flask(__name__)
 
@@ -27,7 +28,7 @@ def login():
         data_password=User.query.filter_by(password=password).first()
 
         if data_email is not None and data_password is not None:
-            session['logged_in'] = True
+            session['logged_in'] = email
             return redirect(url_for('main'))
         elif data_email is None:
             return '이메일이 틀렸습니다'
@@ -36,7 +37,7 @@ def login():
 
 @app.route('/logout')
 def logout():
-    session['logged_in']=False
+    session.pop('logged_in', None)
     return redirect(url_for('home'))
 
 @app.route('/register', methods=['GET','POST']) 
@@ -54,7 +55,7 @@ def register():
         elif password != password_2:
             return "비밀번호가 일치하지 않습니다"
         else:
-            usertable=User() #user_table 클래스
+            usertable=User()
             usertable.username = username
             usertable.email = email
             usertable.password = password
@@ -67,13 +68,27 @@ def register():
 
 @app.route('/main', methods=['GET','POST']) 
 def main():
+    books = Book.query.all()
+    
     if request.method == 'GET':
-        books = Book.query.all()
         return render_template('main.html', books=books)
     else:
-        return render_template("main.html")
+        book_id=request.form['book_id']
 
+        data_book = Book.query.filter_by(id = book_id).first()
+        data_book.quantity -= 1
+        db.session.commit()
+        return render_template('main.html', books=books)
 
+@app.route('/BookRental', methods=['GET','POST']) 
+def BookRental():
+
+    return render_template('BookRental.html')
+
+@app.route('/returnbook', methods=['GET','POST']) 
+def returnbook():
+
+    return render_template('returnbook.html')
 
 
 
