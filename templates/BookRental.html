@@ -1,12 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BookRental-Page</title>
-</head>
-<body>
-    
-</body>
-</html>
+    <html>
+        <body>
+            <table>
+
+            {% for rentalbook in rentalbooks %}
+                <tr>
+                    <a href="/books/{{ rentalbook.id }}" name="bookname">{{ rentalbook.bookname }}</a>
+                    <a name="rental_date">{{ rentalbook.rental_date }}~</a>
+                    <a name="return_date">{{ rentalbook.return_date }}</a>
+
+        
+                    <br>
+                </tr>
+            {% endfor %}
+            </table>
+            <a href="/BookRental">대여기록</a>
+            <a href="/returnbook">반납하기</a>
+            <a href="/logout">로그아웃</a>
+        </body>
+    </html>
+

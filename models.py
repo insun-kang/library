@@ -49,6 +49,8 @@ class Bookrental(db.Model):
 
     id=db.Column(db.Integer, primary_key=True)
     book_id=db.Column(db.Integer, ForeignKey('booktable.id'))
+    bookname= db.Column(db.String(100))
+    user_id=db.Column(db.Integer, ForeignKey('usertable.id'))
     username= db.Column(db.String(32))
     rental_date=db.Column(db.DATE)
     return_date=db.Column(db.DATE, nullable=True)

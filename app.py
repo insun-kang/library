@@ -87,7 +87,9 @@ def main():
             data_book.quantity -= 1
 
             bookrental= Bookrental(
-                book_id=book_id,
+                book_id=data_book.id,
+                bookname=data_book.book_name,
+                user_id=data_user.id,
                 username=data_user.username,
                 rental_date=datetime.date.today(),
                 return_date=datetime.date.today()+datetime.timedelta(+7)
@@ -99,8 +101,8 @@ def main():
 
 @app.route('/BookRental', methods=['GET','POST']) 
 def BookRental():
-
-    return render_template('BookRental.html')
+    rentalbooks = Bookrental.query.all()
+    return render_template('BookRental.html', rentalbooks=rentalbooks)
 
 @app.route('/returnbook', methods=['GET','POST']) 
 def returnbook():
