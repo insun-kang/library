@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>return-page</title>
+</head>
+<body>
+    <table>
+
+        {% for returnbook in returnbooks %}
+            <tr>
+                <a href="/books/{{ returnbook.id }}" >{{ returnbook.bookname }}</a>
+                <a name="return_date">{{ returnbook.return_date }}</a>
+                <form action="/returnbook" method="POST">
+                    
+                    <input type="hidden" name="bookname" value="{{ returnbook.bookname }}">
+                    <input type="submit" value="반납하기">
+                </form>
+
+
+                <br>
+            </tr>
+        {% endfor %}
+    </table>
+    <a href="/BookRental">대여기록</a>
+    <a href="/returnbook">반납하기</a>
+    <a href="/logout">로그아웃</a>
+</body>
+</html>

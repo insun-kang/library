@@ -1,15 +1,46 @@
-import os #디렉토리 절대 경로
-from flask import Flask, render_template, request, redirect
+import os 
+import datetime
+from flask import Flask, render_template, request, redirect, session, url_for
 from flask_sqlalchemy import SQLAlchemy
 from models import db
-from models import User
+from models import User, Book, Bookrental
+
 app = Flask(__name__)
 
-@app.route('/')
-def hello():
-	return render_template('login.html')
+@app.route('/', methods=['GET','POST'])
+def home():
+    if not session.get('logged_in'):
+	    return render_template('index.html')
+    else:
+        if request.method=='POST':
+            return render_template('index.html')
+        return render_template('index.html')
 
-@app.route('/register', methods=['GET','POST']) #GET(정보보기), POST(정보수정) 메서드 허용
+@app.route('/login', methods=['GET','POST'])  
+def login():
+    if request.method =='GET':
+        return render_template('login.html')
+    else:
+        email=request.form.get('email')
+        password=request.form.get('password')
+
+        data_email=User.query.filter_by(email=email).first() 
+        data_password=User.query.filter_by(password=password).first()
+
+        if data_email is not None and data_password is not None:
+            session['logged_in'] = email
+            return redirect(url_for('main'))
+        elif data_email is None:
+            return '이메일이 틀렸습니다'
+        else:
+            return '비밀번호가 틀렸습니다' 
+
+@app.route('/logout')
+def logout():
+    session.pop('logged_in', None)
+    return redirect(url_for('home'))
+
+@app.route('/register', methods=['GET','POST']) 
 def register():
     if request.method == 'GET':
         return render_template("register.html")
@@ -17,35 +48,101 @@ def register():
         username = request.form.get('username')
         email = request.form.get('email')
         password = request.form.get('password')
-        password_2 = request.form.get('password')
+        password_2 = request.form.get('re_password')
 
         if not(username and email and password and password_2):
             return "입력되지 않은 정보가 있습니다"
         elif password != password_2:
             return "비밀번호가 일치하지 않습니다"
         else:
-            usertable=User() #user_table 클래스
-            usertable.username = username
-            usertable.email = email
-            usertable.password = password
+            usertable=User(
+                username = username,
+                email = email,
+                password = password
+                
+            )
+            
             
             db.session.add(usertable)
             db.session.commit()
             return "회원가입 성공"
         return redirect('/')
 
+
+@app.route('/main', methods=['GET','POST']) 
+def main():
+    books = Book.query.all()
+    
+    if request.method == 'GET':
+        return render_template('main.html', books=books)
+    else:
+        book_id=request.form['book_id']
+
+        data_book = Book.query.filter_by(id = book_id).first()
+        data_user = User.query.filter_by(email=session['logged_in']).first()
+        data_rentalbook=Bookrental.query.filter_by(book_id=data_book.id).first()
+
+        if data_book.quantity<=0:
+            return '대여할 수 없습니다.'
+
+        elif data_rentalbook is not None:
+
+            return '이미 빌린 책입니다'
+        else:
+            data_book.quantity -= 1
+
+            bookrental= Bookrental(
+                book_id=data_book.id,
+                bookname=data_book.book_name,
+                user_id=data_user.id,
+                username=data_user.username,
+                rental_date=datetime.date.today(),
+                return_date='미반납'
+            )
+            db.session.add(bookrental)
+            db.session.commit()
+            return '대여성공'
+        return render_template('main.html', books=books)
+
+@app.route('/BookRental', methods=['GET','POST']) 
+def BookRental():
+    rentalbooks = Bookrental.query.all()
+    return render_template('BookRental.html', rentalbooks=rentalbooks)
+
+@app.route('/returnbook', methods=['GET','POST']) 
+def returnbook():
+    returnbooks = Bookrental.query.filter_by(return_date='미반납')  #미반납인 책들만 출력
+    if request.method == 'GET':
+        return render_template('returnbook.html', returnbooks=returnbooks)
+    else:
+        bookname=request.form['bookname']
+        data_returnbook=Bookrental.query.filter_by(bookname=bookname).first()   #반납시 현재시간 return_date에 삽입
+        data_returnbook.return_date=datetime.date.today()
+        db.session.commit()
+
+
+        data_book = Book.query.filter_by(book_name = bookname).first()  #반납시 수량 +1
+        data_book.quantity += 1
+        db.session.commit()
+
+
+    return render_template('returnbook.html', returnbooks=returnbooks)
+
+@app.route('/books/<int:id>/')
+def books(id):
+    book = Book.query.get(id)
+    return render_template('bookdescript.html', book=book)
+
+
 if __name__ == "__main__":
-    #데이터베이스---------
-    basedir = os.path.abspath(os.path.dirname(__file__)) #현재 파일이 있는 디렉토리 절대 경로
-    dbfile = os.path.join(basedir, 'db.sqlite') #데이터베이스 파일을 만든다
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + dbfile
-    app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True #사용자에게 정보 전달완료하면 teadown. 그 때마다 커밋=DB반영
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False #추가 메모리를 사용하므로 꺼둔다
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost:3306/library'
+    app.config['SQLALCHEMY_ECHO'] = True
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.secret_key = 'manyrandombyte'
 
-#    db = SQLAlchemy() #SQLAlchemy를 사용해 데이터베이스 저장
-    db.init_app(app) #app설정값 초기화
-    db.app = app #Models.py에서 db를 가져와서 db.app에 app을 명시적으로 넣는다
-    db.create_all() #DB생성
+    db.init_app(app) 
+    db.app = app
+    db.create_all() 
 
     app.run(host="127.0.0.1", port=5000, debug=True)

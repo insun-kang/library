@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+    <html>
+        <body>
+            <table>
+                <tr>
+                    <a>도서명</a>
+                    <a>평점</a>
+                    <a>수량</a>
+                    <br>
+                </tr>
+            {% for book in books %}
+                <tr>
+                    <a href="/books/{{ book.id }}" name="book_name">{{ book.book_name }}</a>
+                    <a name="rating">{{ book.rating }}점</a>
+                    
+                    <a name="quantity">{{ book.quantity }}권 남음</a>
+                    <form action="/main" method="POST">
+                        <input type="hidden" name="book_id" value="{{ book.id }}">
+                        <input type="hidden" name="book_name" value="{{ book.book_name }}">
+                        <input type="submit" value="대여하기">
+                    </form>
+        
+                    <br>
+                </tr>
+            {% endfor %}
+            </table>
+            <a href="/BookRental">대여기록</a>
+            <a href="/returnbook">반납하기</a>
+            <a href="/logout">로그아웃</a>
+        </body>
+    </html>
+
