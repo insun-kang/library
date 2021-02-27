@@ -1,4 +1,4 @@
-import os #디렉토리 절대 경로
+import os 
 import datetime
 from flask import Flask, render_template, request, redirect, session, url_for
 from flask_sqlalchemy import SQLAlchemy
@@ -111,24 +111,27 @@ def BookRental():
 
 @app.route('/returnbook', methods=['GET','POST']) 
 def returnbook():
-    returnbooks = Bookrental.query.filter_by(return_date='미반납')
+    returnbooks = Bookrental.query.filter_by(return_date='미반납')  #미반납인 책들만 출력
     if request.method == 'GET':
         return render_template('returnbook.html', returnbooks=returnbooks)
     else:
         bookname=request.form['bookname']
-        data_returnbook=Bookrental.query.filter_by(bookname=bookname).first()
+        data_returnbook=Bookrental.query.filter_by(bookname=bookname).first()   #반납시 현재시간 return_date에 삽입
         data_returnbook.return_date=datetime.date.today()
         db.session.commit()
 
 
-        data_book = Book.query.filter_by(book_name = bookname).first()
+        data_book = Book.query.filter_by(book_name = bookname).first()  #반납시 수량 +1
         data_book.quantity += 1
         db.session.commit()
 
 
-
     return render_template('returnbook.html', returnbooks=returnbooks)
 
+@app.route('/books/<int:id>/')
+def books(id):
+    book = Book.query.get(id)
+    return render_template('bookdescript.html', book=book)
 
 
 if __name__ == "__main__":
