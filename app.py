@@ -118,8 +118,13 @@ def returnbook():
         bookname=request.form['bookname']
         data_returnbook=Bookrental.query.filter_by(bookname=bookname).first()
         data_returnbook.return_date=datetime.date.today()
-
         db.session.commit()
+
+
+        data_book = Book.query.filter_by(book_name = bookname).first()
+        data_book.quantity += 1
+        db.session.commit()
+
 
 
     return render_template('returnbook.html', returnbooks=returnbooks)
