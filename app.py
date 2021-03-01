@@ -10,16 +10,14 @@ app = Flask(__name__)
 @app.route('/', methods=['GET','POST'])
 def home():
     if not session.get('logged_in'):
-	    return render_template('index.html')
+	    return render_template('index2.html')
     else:
-        if request.method=='POST':
-            return render_template('index.html')
-        return render_template('index.html')
+        return render_template('index2.html')
 
 @app.route('/login', methods=['GET','POST'])  
 def login():
     if request.method =='GET':
-        return render_template('login.html')
+        return render_template('index.html')
     else:
         email=request.form.get('email')
         password=request.form.get('password')
