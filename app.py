@@ -85,9 +85,7 @@ def main():
         if data_book.quantity<=0:
             return '대여할 수 없습니다.'
 
-        elif data_rentalbook is not None:
-
-            return '이미 빌린 책입니다'
+ 
         else:
             data_book.quantity -= 1
 
@@ -116,8 +114,8 @@ def returnbook():
         return render_template('returnbook.html', returnbooks=returnbooks)
     else:
         bookname=request.form['bookname']
-        data_returnbook=Bookrental.query.filter_by(bookname=bookname).first()   #반납시 현재시간 return_date에 삽입
-        data_returnbook.return_date=datetime.date.today()
+        data_returnbook=Bookrental.query.filter_by(bookname=bookname).all()   #반납시 현재시간 return_date에 삽입
+        data_returnbook[-1].return_date=datetime.date.today()
         db.session.commit()
 
 

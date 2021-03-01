@@ -1,32 +1,118 @@
 <!DOCTYPE html>
-    <html>
-        <body>
-            <table>
-                <tr>
-                    <a>도서명</a>
-                    <a>평점</a>
-                    <a>수량</a>
-                    <br>
-                </tr>
-            {% for book in books %}
-                <tr>
-                    <a href="/books/{{ book.id }}" name="book_name">{{ book.book_name }}</a>
-                    <a name="rating">{{ book.rating }}점</a>
-                    
-                    <a name="quantity">{{ book.quantity }}권 남음</a>
-                    <form action="/main" method="POST">
-                        <input type="hidden" name="book_id" value="{{ book.id }}">
-                        <input type="hidden" name="book_name" value="{{ book.book_name }}">
-                        <input type="submit" value="대여하기">
-                    </form>
-        
-                    <br>
-                </tr>
-            {% endfor %}
-            </table>
-            <a href="/BookRental">대여기록</a>
-            <a href="/returnbook">반납하기</a>
-            <a href="/logout">로그아웃</a>
-        </body>
-    </html>
+<html lang="en">
 
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Main-page</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="/static/css/shop-homepage.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="/main">ELICE LIBRARY</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/BookRental">대여기록</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/returnbook">반납하기</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/logout">로그아웃</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Content -->
+  <div class="container">
+
+    <div class="row">
+
+
+      <!-- /.col-lg-3 -->
+
+      <div class="col-lg-9">
+
+        <div id="carouselExampleIndicators" class="carousel slide my-4" data-ride="carousel">
+          
+          <div class="carousel-inner" role="listbox">
+            <div class="carousel-item active">
+              <img class="d-block img-fluid" src="http://placehold.it/900x350" alt="First slide">
+            </div>
+            
+          </div>
+          
+        </div>
+
+        <div class="row">
+          {% for book in books %}
+            <div class="col-lg-4 col-md-6 mb-4">
+              <div class="card h-100">
+                <a href=/books/{{ book.id }}><img class="card-img-top" src="http://placehold.it/700x400" alt=""></a>
+                <div class="card-body">
+                  <h4 class="card-title">
+                    <a href="/books/{{ book.id }}" name="book_name">{{ book.book_name }}</a>
+                  </h4>
+                  <p class="card-text"><a name="quantity">{{ book.quantity }}권 남음</a></p>
+                  <large class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</large>
+                  
+
+                </div>
+                <div class="card-footer">
+                  <form action="/main" method="POST">
+                    <input type="hidden" name="book_id" value="{{ book.id }}">
+                    <input type="hidden" name="book_name" value="{{ book.book_name }}">
+                    <input type="submit" value="대여하기">
+                  </form>
+                  
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+        <!-- /.row -->
+
+      </div>
+      <!-- /.col-lg-9 -->
+
+    </div>
+    <!-- /.row -->
+
+  </div>
+  <!-- /.container -->
+
+  <!-- Footer -->
+  <footer class="py-5 bg-dark">
+    <div class="container">
+      <p class="m-0 text-center text-white">Copyright &copy; ELICE LIBRARY 2021</p>
+    </div>
+    <!-- /.container -->
+  </footer>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="/static/js/jquery.min.js"></script>
+  <script src="/static/js/bootstrap.bundle.js"></script>
+
+</body>
+
+</html>
