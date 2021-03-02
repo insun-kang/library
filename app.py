@@ -10,9 +10,9 @@ app = Flask(__name__)
 @app.route('/', methods=['GET','POST'])
 def home():
     if not session.get('logged_in'):
-	    return render_template('index2.html')
+	    return render_template('index.html')
     else:
-        return render_template('index2.html')
+        return render_template('index.html')
 
 @app.route('/login', methods=['GET','POST'])  
 def login():
