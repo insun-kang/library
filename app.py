@@ -10,9 +10,9 @@ app = Flask(__name__)
 @app.route('/', methods=['GET','POST'])
 def home():
     if not session.get('logged_in'):
-	    return render_template('index2.html')
+	    return render_template('index.html')
     else:
-        return render_template('index2.html')
+        return render_template('index.html')
 
 @app.route('/login', methods=['GET','POST'])  
 def login():
@@ -141,4 +141,4 @@ if __name__ == "__main__":
     db.app = app
     db.create_all() 
 
-    app.run(host="127.0.0.1", port=80, debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
