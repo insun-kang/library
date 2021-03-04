@@ -163,4 +163,8 @@ if __name__ == "__main__":
     db.app = app
     db.create_all() 
 
+<<<<<<< HEAD
+    app.run(host="0.0.0.0", port=5000, debug=True)
+=======
     app.run(host="127.0.0.1", port=5000, debug=True)
+>>>>>>> 88189f6d9d92289655bdcf8d9b1cc2ff3fd8f59c
