@@ -54,3 +54,14 @@ class Bookrental(db.Model):
     username= db.Column(db.String(32))
     rental_date=db.Column(db.DATE)
     return_date=db.Column(db.String(100))
+
+class Comment(db.Model):
+    __tablename__ = 'commenttable'
+    __table_args__ = {'mysql_collate': 'utf8_general_ci'}
+
+    id = db.Column(db.Integer, primary_key=True)
+    book_id = db.Column(db.Integer, db.ForeignKey('booktable.id'))
+    user_id = db.Column(db.Integer)
+    content = db.Column(db.Text(), nullable=False)
+    rating = db.Column(db.Integer)
+    create_date = db.Column(db.DateTime(), nullable=False)

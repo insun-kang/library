@@ -1,9 +1,9 @@
 import os 
 import datetime
-from flask import Flask, render_template, request, redirect, session, url_for
+from flask import Flask, render_template, request, redirect, session, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from models import db
-from models import User, Book, Bookrental
+from models import User, Book, Bookrental, Comment
 
 app = Flask(__name__)
 
@@ -97,7 +97,7 @@ def main():
             )
             db.session.add(bookrental)
             db.session.commit()
-            return '대여성공'
+            flash('반납되었습니다')
         return render_template('main.html', books=books)
 
 @app.route('/BookRental', methods=['GET','POST']) 
@@ -124,10 +124,35 @@ def returnbook():
 
     return render_template('returnbook.html', returnbooks=returnbooks)
 
-@app.route('/books/<int:id>/')
-def books(id):
-    book = Book.query.get(id)
-    return render_template('bookdescript.html', book=book)
+@app.route('/books/<int:book_id>/', methods=['GET','POST'])
+def books(book_id):
+    book = Book.query.filter_by(id=book_id).first()
+    comments= Comment.query.filter_by(book_id=book_id)
+    
+    if request.method == 'GET':
+        return render_template('bookdescript.html', book=book, comments=comments)
+    else:
+        
+        data_user = User.query.filter_by(email=session['logged_in']).first()
+        find_user = Comment.query.filter_by(user_id=data_user.id)
+        content=request.form['content']
+        rating=request.form['rating']
+        comment= Comment(
+                book_id = book.id,
+                user_id = data_user.id,
+                content = content,
+                rating = rating,
+                create_date = datetime.date.today()
+            )
+        db.session.add(comment)
+        db.session.commit()
+
+        return render_template('bookdescript.html', book=book, comments=comments)
+            
+        
+
+
+
 
 
 if __name__ == "__main__":
@@ -141,4 +166,4 @@ if __name__ == "__main__":
     db.app = app
     db.create_all() 
 
-    app.run(host="127.0.0.1", port=80, debug=True)
+    app.run(host="127.0.0.1", port=5000, debug=True)
