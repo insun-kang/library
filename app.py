@@ -29,14 +29,14 @@ def login():
             session['logged_in'] = email
             return redirect(url_for('main'))
         elif data_email is None:
-            return '이메일이 틀렸습니다'
+            return ''' <script> alert('이메일이 틀렸습니다'); location.href="/login" </script> '''
         else:
-            return '비밀번호가 틀렸습니다' 
+            return ''' <script> alert('비밀번호가 틀렸습니다' ); location.href="/login" </script> '''
 
 @app.route('/logout')
 def logout():
     session.pop('logged_in', None)
-    return redirect(url_for('home'))
+    return ''' <script> alert('로그아웃 되었습니다' ); location.href="/" </script> '''
 
 @app.route('/register', methods=['GET','POST']) 
 def register():
@@ -49,9 +49,9 @@ def register():
         password_2 = request.form.get('re_password')
 
         if not(username and email and password and password_2):
-            return "입력되지 않은 정보가 있습니다"
+            return ''' <script> alert("입력되지 않은 정보가 있습니다"); location.href="/register" </script> '''
         elif password != password_2:
-            return "비밀번호가 일치하지 않습니다"
+            return ''' <script> alert("비밀번호가 일치하지 않습니다"); location.href="/register" </script> '''
         else:
             usertable=User(
                 username = username,
@@ -63,7 +63,7 @@ def register():
             
             db.session.add(usertable)
             db.session.commit()
-            return "회원가입 성공"
+            return ''' <script> alert("{}님 회원가입 되었습니다"); location.href="/" </script> '''.format(username)
         return redirect('/')
 
 
@@ -81,7 +81,7 @@ def main():
         data_rentalbook=Bookrental.query.filter_by(book_id=data_book.id).first()
 
         if data_book.quantity<=0:
-            return '대여할 수 없습니다.'
+            return ''' <script> alert("대여할 수 없습니다"); location.href="/main" </script> '''
 
  
         else:
@@ -97,7 +97,7 @@ def main():
             )
             db.session.add(bookrental)
             db.session.commit()
-            flash('반납되었습니다')
+            return ''' <script> alert("대여되었습니다"); location.href="/main" </script> '''
         return render_template('main.html', books=books)
 
 @app.route('/BookRental', methods=['GET','POST']) 
@@ -120,7 +120,7 @@ def returnbook():
         data_book = Book.query.filter_by(book_name = bookname).first()  #반납시 수량 +1
         data_book.quantity += 1
         db.session.commit()
-
+        return ''' <script> alert("반납되었습니다"); location.href="/returnbook" </script> '''
 
     return render_template('returnbook.html', returnbooks=returnbooks)
 
@@ -132,7 +132,7 @@ def books(book_id):
     if request.method == 'GET':
         return render_template('bookdescript.html', book=book, comments=comments)
     else:
-        
+
         data_user = User.query.filter_by(email=session['logged_in']).first()
         find_user = Comment.query.filter_by(user_id=data_user.id)
         content=request.form['content']
@@ -150,9 +150,6 @@ def books(book_id):
         return render_template('bookdescript.html', book=book, comments=comments)
             
         
-
-
-
 
 
 if __name__ == "__main__":

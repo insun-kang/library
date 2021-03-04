@@ -47,6 +47,7 @@
   <div class="container">
  
     <div class="row text-center">
+          
           {% for book in books %}
             <div class="col-lg-3 col-md-6 mb-4">
               <div class="card h-100">
@@ -65,8 +66,8 @@
                     <input type="hidden" name="book_id" value="{{ book.id }}">
                     <input type="hidden" name="book_name" value="{{ book.book_name }}">
                     <input type="submit" value="대여하기">
+                    
                   </form>
-                  
                 </div>
               </div>
             </div>
