@@ -4,6 +4,7 @@ from flask import Flask, render_template, request, redirect, session, url_for, f
 from flask_sqlalchemy import SQLAlchemy
 from models import db
 from models import User, Book, Bookrental, Comment
+from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__)
 
@@ -23,9 +24,8 @@ def login():
         password=request.form.get('password')
 
         data_email=User.query.filter_by(email=email).first() 
-        data_password=User.query.filter_by(password=password).first()
 
-        if data_email is not None and data_password is not None:
+        if check_password_hash(data_email.password, password):
             session['logged_in'] = email
             return ''' <script> alert('{}님 환영합니다'); location.href="/main" </script> '''.format(data_email.username)
         elif data_email is None:
@@ -53,10 +53,11 @@ def register():
         elif password != password_2:
             return ''' <script> alert("비밀번호가 일치하지 않습니다"); location.href="/register" </script> '''
         else:
+            hashed_pw = generate_password_hash(password, method="sha256")
             usertable=User(
                 username = username,
                 email = email,
-                password = password
+                password = hashed_pw
                 
             )
             
@@ -165,4 +166,4 @@ if __name__ == "__main__":
     db.app = app
     db.create_all() 
 
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="127.0.0.1", port=5000, debug=True)
