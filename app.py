@@ -32,7 +32,6 @@ def login():
             return ''' <script> alert('이메일이 틀렸습니다'); location.href="/login" </script> '''
         else:
             return ''' <script> alert('비밀번호가 틀렸습니다' ); location.href="/login" </script> '''
-        
 
 @app.route('/logout')
 def logout():

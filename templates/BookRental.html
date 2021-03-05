@@ -46,24 +46,13 @@
   <!-- Page Content -->
   <div class="container">
 
-    <div class="row">
 
       <!-- /.col-lg-3 -->
 
-      <div class="col-lg-9">
 
-        <div id="carouselExampleIndicators" class="carousel slide my-4" data-ride="carousel">
-          
-          <div class="carousel-inner" role="listbox">
-            
-            
-          </div>
-          
-        </div>
-
-        <div class="row">
+        <div class="row text-center">
             {% for rentalbook in rentalbooks %}
-                <div class="col-lg-4 col-md-6 mb-4">
+                <div class="col-lg-3 col-md-6 mb-4">
                     <div class="card h-100">
                         <a href="/books/{{ rentalbook.id }}"><img class="card-img-top" src="/static/image/{{ rentalbook.id }}.jpg" alt=""></a>
                         <div class="card-body">
