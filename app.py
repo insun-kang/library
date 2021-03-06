@@ -8,6 +8,9 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__)
 
+
+
+
 @app.route('/', methods=['GET','POST'])
 def home():
     if not session.get('logged_in'):
@@ -73,7 +76,11 @@ def main():
     books = Book.query.all()
     
     if request.method == 'GET':
-        return render_template('main.html', books=books)
+        try:
+            if session['logged_in'] is not None:
+                return render_template('main.html', books=books)
+        except:
+            return ''' <script> alert("로그인을 하세요"); location.href="/" </script> '''
     else:
         book_id=request.form['book_id']
 
@@ -139,7 +146,8 @@ def books(book_id):
         data_user = User.query.filter_by(email=session['logged_in']).first()
         find_user = Comment.query.filter_by(user_id=data_user.id)
         content=request.form['content']
-        rating=request.form['rating']
+        rating=int(request.form['rating'])+1
+
         comment= Comment(
                 book_id = book.id,
                 user_id = data_user.id,
@@ -154,7 +162,6 @@ def books(book_id):
             
         
 
-
 if __name__ == "__main__":
 
     app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost:3306/library'
@@ -166,4 +173,4 @@ if __name__ == "__main__":
     db.app = app
     db.create_all() 
 
-    app.run(host="127.0.0.1", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)

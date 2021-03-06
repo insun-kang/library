@@ -76,7 +76,18 @@
             
             {% for comment in comments %}
               {%if comment.content|length %}
-              <p>{{comment.content}}</p> <p>{{comment.rating}}</p>
+              <p>{{comment.content}}</p>
+                
+                <span class="text-warning">
+                  {% for i in range(comment.rating) %}
+                  &#9733;
+                  {% endfor %}
+                </span>
+                <span class="text-warning">
+                  {% for i in range(5-comment.rating) %}
+                  &#9734;
+                  {% endfor %}
+                </span>
               <small class="text-muted">Posted by Anonymous on {{comment.create_date}}</small>              
               <hr>
               {%else%}
@@ -86,7 +97,15 @@
             
             <form action="/books/{{book.id}}/" method="POST">
               <input type="textarea" id="content" placeholder="댓글" name="content">
-              <input type="number" id="rating" placeholder="0~5의 점수를 주세요!!" name="rating">
+              <input id="rating" type="hidden" name="rating"/>
+              <input id="rating" type="hidden" name="rating"/>
+              <div class="flex float-left">
+                {% for id in range(5) %}
+                  <img class="rating_star" data-value="{{ id }}" id="rating{{ id }}" width="32"
+                      src="/static/image/star_empty.png">
+                {% endfor %}
+              </div>
+              
               <input type="submit" class="btn btn-success" value="댓글 쓰기">
             </form>
           </div>
@@ -104,7 +123,7 @@
   <!-- Footer -->
   <footer class="py-5 bg-dark">
     <div class="container">
-      <p class="m-0 text-center text-white">Copyright &copy; Your Website 2020</p>
+      <p class="m-0 text-center text-white">Copyright &copy; Elice Library 202</p>
     </div>
     <!-- /.container -->
   </footer>
@@ -112,7 +131,35 @@
   <!-- Bootstrap core JavaScript -->
   <script src="/static/js/jquery.min.js"></script>
   <script src="/static/js/bootstrap.bundle.js"></script>
+  <script>
+    $(document).ready(function () {
+      function fillStar(id) {
+        for (let i = 0; i < 5; i++) {
+          if (i <= id) {
+            $('#rating' + i).attr('src', '/static/image/star_fill.png');
+          } else {
+            $('#rating' + i).attr('src', '/static/image/star_empty.png');
+          }
+        }
+      }
 
+      $('.rating_star').on('click', function (e) {
+        let id = $(this).attr('data-value');
+        $('#rating').val(id);
+        fillStar(id);
+      })
+    })
+  </script>
+
+  <style>
+      #star_grade a{
+        text-decoration: none;
+        color: gray;
+      }
+      #star_grade a.on{
+          color: red;
+      }
+  </style>
 </body>
 
 </html>
